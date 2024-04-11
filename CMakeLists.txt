@@ -17,5 +17,21 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(Proces_Dir ${CMAKE_SOURCE_DIR}/src/process)
 set(PNC_Map_Dir ${CMAKE_SOURCE_DIR}/src/pnc_map)
 
+# 三方库
+set(EIGEN3_INCLUDE_DIR "D:/library/eigen-3.4.0")
+
+# 往变量CMAKE_MODULE_PATH增加目录"${EIGEN3_INCLUDE_DIR}/cmake"
+list(APPEND CMAKE_MODULE_PATH "${EIGEN3_INCLUDE_DIR}/cmake")
+
+# 打印
+message("CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+
+# 查找cmake文件
+find_package(Eigen3 3.4 REQUIRED)
+
+if(TARGET Eigen3::Eigen)
+    message(STATUS "****** Eigen3.4 found in ${EIGEN3_INCLUDE_DIR}******")
+endif()
+
 # 添加子目录（由于该层无任何代码，直接添加子目录）该命令为找子目录里面的CMakeLists文件
 add_subdirectory(src)
