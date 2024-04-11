@@ -1,48 +1,21 @@
 cmake_minimum_required(VERSION 3.29.0)
-project(planning)
+
+# 版本、描述、github链接（要将.git删除）、语言（CXX表示C++）
+project(planning
+    VERSION 0.0.1
+    DESCRIPTION "ADAS"
+    HOMEPAGE_URL "https://github.com/jasper-adas/cmake_planning_test"
+    LANGUAGES CXX
+)
 set(CMAKE_CXX_STANDARD 17)
 
-# 由于生成了动态库，而可执行文件在运行时需加载动态库
-# 因此动态库需放在可执行文件同一目录（在win下分别为exe和dll）
-# 指定可执行文件的生成目录
-# set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-# 去掉上面的命令，改为：将动态库和exe文件都指定到bin目录
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+# 变量设置，设置动态库以及可执行文件的输出目录
+# 这里设置的变量会传递到下面子目录里面，即下面子目录可用到父目录里面的变量
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-# 让生成的可执行文件包含刚刚创建的include和src目录
-aux_source_directory(${PROJECT_SOURCE_DIR}/src SRC_LISTS)
+# 可以将目录放到自定义的变量中
+set(Proces_Dir ${CMAKE_SOURCE_DIR}/src/process)
+set(PNC_Map_Dir ${CMAKE_SOURCE_DIR}/src/pnc_map)
 
-# 把src目录下的所有cpp文件生成动态库，让planning_main.cpp生成可执行文件
-# 让可执行文件连接该动态库
-# （名称：common；）
-add_library(common
-    SHARED
-    ${SRC_LISTS}
-)
-
-# 动态库依赖一些头文件，因此需包含头文件的目录
-target_include_directories(common
-    PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-)
-
-# 注意：runtime只用于win平台
-# linux平台：CMAKE_LIBRARY_OUTPUT_DIRECTORY；静态库用：CMAKE_ARCHIVE_OUTPUT_DIRECTORY
-
-# 生成可执行文件（依赖的文件仅planning_main.cpp）
-add_executable(
-    planning_main
-    planning_main.cpp
-)
-
-# 可执行文件也需要包含头文件目录，通过public的方式包含目录
-target_include_directories(planning_main
-    PUBLIC
-    ${PROJECT_SOURCE_DIR}/include
-)
-
-# 将可执行文件链接到生成的动态库上
-target_link_libraries(planning_main
-    PUBLIC
-    common
-)
+# 添加子目录（由于该层无任何代码，直接添加子目录）该命令为找子目录里面的CMakeLists文件
+add_subdirectory(src)
